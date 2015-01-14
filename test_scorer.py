@@ -12,6 +12,7 @@ def convert_to_output(relation_dict):
 	new_relation['Arg2'] = {}
 	new_relation['Arg2']['TokenList'] = [x[2] for x in relation_dict['Arg2']['TokenList']]
 	new_relation['Connective'] = {}
+	new_relation['Connective']['TokenList'] = []
 	if 'TokenList' in relation_dict['Connective']:
 		new_relation['Connective']['TokenList'] = [x[2] for x in relation_dict['Connective']['TokenList']]
 	return new_relation
@@ -34,6 +35,7 @@ def main():
 	output_relations[6]['Sense'] = [u'Contingency.Condition'] # This will hurt sense recall
 	output_relations.pop(0) # This will hurt all precision
 	scorer.evaluate(relations, output_relations)
+	return output_relations
 
 if __name__ == '__main__':
 	main()
