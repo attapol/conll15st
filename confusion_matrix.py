@@ -92,6 +92,7 @@ class ConfusionMatrix(object):
 		recall = numpy.zeros(self.alphabet.size())
 		f1 = numpy.zeros(self.alphabet.size())
 
+		lines = []
 		# computing precision, recall, and f1
 		for i in xrange(self.alphabet.size()):
 			precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
@@ -101,11 +102,15 @@ class ConfusionMatrix(object):
 			else:
 				f1[i] = 0
 			correct += self.matrix[i,i]
-			print '%s \tprecision %f \trecall %f\t F1 %f' %\
-				(self.alphabet.get_label(i), precision[i], recall[i], f1[i])
-		print 'accuracy rate = %f' %(correct / sum(sum(self.matrix[:,:])))
-		print 'average precision %f \t recall %f\t F1 %f' %\
-			(numpy.mean(precision), numpy.mean(recall), numpy.mean(f1))
+			label = self.alphabet.get_label(i)
+			if label != 'no':
+				lines.append( '%s \tprecision %f \trecall %f\t F1 %f' %\
+					(label, precision[i], recall[i], f1[i]))
+		#lines.append( '* Overall accuracy rate = %f' %(correct / sum(sum(self.matrix[:,:]))))
+		lines.append( '* Average precision %f \t recall %f\t F1 %f' %\
+			(numpy.mean(precision), numpy.mean(recall), numpy.mean(f1)))
+		lines.sort()
+		print '\n'.join(lines)
 
 	def print_out(self):
 		"""Printing out confusion matrix along with Macro-F1 score"""
