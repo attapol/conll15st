@@ -41,16 +41,6 @@ def validate(file_name):
 			check_connective(relation)
 		except Exception as e:
 			print 'Line %s' % i, e
-
-def remove_duplicates(predicted_list):
-	to_remove_list = []
-	for i in range(len(predicted_list)):
-		for j in range(len(predicted_list)):
-			if predicted_list[i]['Arg1']['RawText'] == predicted_list[j]['Arg1']['RawText'] and \
-					predicted_list[i]['Arg2']['RawText'] == predicted_list[j]['Arg2']['RawText'] and \
-					i != j:
-				to_remove_list.append(i)
-	return [x for i, x in enumerate(predicted_list) if i not in to_remove_list]
 	
 def check_type(relation):
 	if 'Type' not in relation:
