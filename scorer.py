@@ -252,7 +252,7 @@ if __name__ == '__main__':
 	parser.add_argument('predicted', help='System output file')
 	args = parser.parse_args()
 	gold_list = [json.loads(x) for x in open(args.gold)]
-	validator.validate(args.predicted)
+	#validator.validate(args.predicted)
 	predicted_list = [json.loads(x) for x in open(args.predicted)]
 	evaluate(gold_list, predicted_list)
 

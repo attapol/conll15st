@@ -29,14 +29,14 @@ def validate(file_name):
 	lines = open(file_name)
 	for i, line in enumerate(lines):
 		try:
-			print 'Validating line %s' % i
+			print 'Validating line %s' % (i+1)
 			relation = json.loads(line)
 			check_type(relation)	
 			check_sense(relation)
 			check_args(relation)
 			check_connective(relation)
 		except Exception as e:
-			print 'Line %s' % i, e
+			print 'Line %s' % (i+1), e
 	
 def check_type(relation):
 	if 'Type' not in relation:
@@ -72,7 +72,7 @@ def check_args(relation):
 
 def check_connective(relation):
 	if 'Connective' not in relation:
-		raise ValueError('Field \'Arg1\' is required but not found')
+		raise ValueError('Field \'Connective\' is required but not found')
 	else:
 		check_span(relation['Connective'])
 
