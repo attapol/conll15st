@@ -3,9 +3,12 @@
 """
 import argparse
 import json
+
 from confusion_matrix import ConfusionMatrix, Alphabet
+from conn_head_mapper import ConnHeadMapper
 import validator
 
+CONN_HEAD_MAPPER = ConnHeadMapper()
 
 def evaluate(gold_list, predicted_list):
 	connective_cm = evaluate_connectives(gold_list, predicted_list)
@@ -49,33 +52,16 @@ def evaluate_connectives(gold_list, predicted_list):
 	"""Evaluate connective recognition accuracy for explicit discourse relations
 
 	"""
-	explicit_gold_list = [(x['DocID'], x['Connective']['TokenList']) \
+	explicit_gold_list = [(x['DocID'], x['Connective']['TokenList'], x['Connective']['RawText']) \
 			for x in gold_list if x['Type'] == 'Explicit']
 	explicit_predicted_list = [(x['DocID'], x['Connective']['TokenList']) \
 			for x in predicted_list if x['Type'] == 'Explicit']
-	connective_cm = \
-		compute_binary_eval_metric(explicit_gold_list, explicit_predicted_list, span_exact_matching)	
+	connective_cm = compute_binary_eval_metric(
+			explicit_gold_list, explicit_predicted_list, connective_head_matching)	
 	return connective_cm
 
-
-def span_exact_matching(gold_span, predicted_span):
-	"""Matching two spans
-
-	Input:
-		gold_span : a list of tuples :DocID and list of tuples of token addresses
-		predicted_span : a list of tuples :DocID and list of token indices
-
-	Returns:
-		True if the spans match exactly
-	"""
-	gold_docID = gold_span[0]
-	predicted_docID = predicted_span[0]
-	gold_token_indices = [x[2] for x in gold_span[1]]
-	predicted_token_indices = predicted_span[1]
-	return gold_docID == predicted_docID and gold_token_indices == predicted_token_indices
-
 def spans_exact_matching(gold_doc_id_spans, predicted_doc_id_spans):
-	"""Matching two groups of spans
+	"""Matching two lists of spans
 
 	Input:
 		gold_doc_id_spans : (DocID , a list of lists of tuples of token addresses)
@@ -95,13 +81,55 @@ def spans_exact_matching(gold_doc_id_spans, predicted_doc_id_spans):
 				and exact_match
 	return exact_match
 
+def span_exact_matching(gold_span, predicted_span):
+	"""Matching two spans
 
-def span_partial_matching(gold_span, predicted_span):
-	"""Overlapping in content words
+	Input:
+		gold_span : a list of tuples :(DocID, list of tuples of token addresses)
+		predicted_span : a list of tuples :(DocID, list of token indices)
 
-	Still under construction
+	Returns:
+		True if the spans match exactly
 	"""
-	pass
+	gold_docID = gold_span[0]
+	predicted_docID = predicted_span[0]
+	gold_token_indices = [x[2] for x in gold_span[1]]
+	predicted_token_indices = predicted_span[1]
+	return gold_docID == predicted_docID and gold_token_indices == predicted_token_indices
+
+def connective_head_matching(gold_raw_connective, predicted_raw_connective):
+	"""Matching connectives
+
+	Input:
+		gold_raw_connective : (DocID, a list of tuples of token addresses, raw connective token)
+		predicted_raw_connective : (DocID, a list of tuples of token addresses)
+	
+	A predicted raw connective is considered iff
+		1) the predicted raw connective includes the connective "head"
+		2) the predicted raw connective tokens are the subset of predicted raw connective tokens
+
+	For example:
+		connective_head_matching('two weeks after', 'weeks after')  --> True 
+		connective_head_matching('two weeks after', 'two weeks')  --> False not covering head
+		connective_head_matching('just because', 'because')  --> True 
+		connective_head_matching('just because', 'simply because')  --> False not subset
+		connective_head_matching('just because', 'since')  --> False
+	"""
+	gold_docID, gold_token_address_list, gold_tokens = gold_raw_connective
+	predicted_docID, predicted_token_list = predicted_raw_connective
+	if gold_docID != predicted_docID:
+		return False
+
+	gold_token_indices = [x[2] for x in gold_token_address_list]
+	if gold_token_address_list == predicted_token_list:
+		return True
+	elif not set(predicted_token_list).issubset(set(gold_token_indices)):
+		return False
+	else:
+		conn_head, indices = CONN_HEAD_MAPPER.map_raw_connective(gold_tokens)
+        gold_head_connective_indices = [gold_token_indices[x] for x in indices]
+        return set(gold_head_connective_indices).issubset(set(predicted_token_list))
+
 
 def evaluate_relation(gold_list, predicted_list):
 	"""Evaluate relation accuracy
