@@ -6,7 +6,6 @@ import json
 
 from confusion_matrix import ConfusionMatrix, Alphabet
 from conn_head_mapper import ConnHeadMapper
-import validator
 
 CONN_HEAD_MAPPER = ConnHeadMapper()
 
@@ -16,18 +15,20 @@ def evaluate(gold_list, predicted_list):
 	sense_cm = evaluate_sense(gold_list, predicted_list)
 
 	print 'Explicit connectives--------------'
-	print connective_cm.get_prf('yes')
+	print 'Precision %s Recall %s F1 %s' % connective_cm.get_prf('yes')
 
 	print 'Arg 1 extractor--------------'
-	print arg1_cm.get_prf('yes')
+	print 'Precision %s Recall %s F1 %s' % arg1_cm.get_prf('yes')
 	print 'Arg 2 extractor--------------'
-	print arg2_cm.get_prf('yes')
+	print 'Precision %s Recall %s F1 %s' % arg2_cm.get_prf('yes')
 	print 'Arg1 Arg2 extractor combined--------------'
-	print rel_arg_cm.get_prf('yes')
+	print 'Precision %s Recall %s F1 %s' % rel_arg_cm.get_prf('yes')
 	print 'Sense classification--------------'
 	sense_cm.print_summary()
 	print 'Overall parser performance --------------'
-	print evaluate_relation(gold_list, predicted_list)
+	precision, recall, f1 = evaluate_relation(gold_list, predicted_list)
+	print 'Precision %s Recall %s F1 %s' % (precision, recall, f1)
+	return connective_cm, arg1_cm, arg2_cm, rel_arg_cm, sense_cm, precision, recall, f1
 
 
 def evaluate_argument_extractor(gold_list, predicted_list):
@@ -252,7 +253,6 @@ if __name__ == '__main__':
 	parser.add_argument('predicted', help='System output file')
 	args = parser.parse_args()
 	gold_list = [json.loads(x) for x in open(args.gold)]
-	#validator.validate(args.predicted)
 	predicted_list = [json.loads(x) for x in open(args.predicted)]
 	evaluate(gold_list, predicted_list)
 
