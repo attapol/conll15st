@@ -25,7 +25,7 @@ SENSES = ['Temporal.Asynchronous.Precedence',
 		'EntRel',
 		]
 
-def validate(file_name):
+def validate_file(file_name):
 	lines = open(file_name)
 	for i, line in enumerate(lines):
 		try:
@@ -37,6 +37,16 @@ def validate(file_name):
 			check_connective(relation)
 		except Exception as e:
 			print 'Line %s' % (i+1), e
+
+def validate_relation_list(relation_list):
+	for i, relation in enumerate(relation_list):
+		try:
+			check_type(relation)	
+			check_sense(relation)
+			check_args(relation)
+			check_connective(relation)
+		except Exception as e:
+			print 'Relation %s' % (i+1), e
 	
 def check_type(relation):
 	if 'Type' not in relation:
@@ -86,4 +96,4 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser('System output format validator')
 	parser.add_argument('system_output_file')
 	args = parser.parse_args()
-	validate(args.system_output_file)
+	validate_file(args.system_output_file)
