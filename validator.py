@@ -6,6 +6,7 @@ It verifies that each line is
 """
 import argparse
 import json 
+import sys
 
 RELATION_TYPES = ['Explicit', 'Implicit', 'AltLex', 'EntRel', 'NoRel']
 SENSES = ['Temporal.Asynchronous.Precedence',
@@ -27,6 +28,7 @@ SENSES = ['Temporal.Asynchronous.Precedence',
 
 def validate_file(file_name):
 	lines = open(file_name)
+	all_correct = True
 	for i, line in enumerate(lines):
 		try:
 			print 'Validating line %s' % (i+1)
@@ -36,9 +38,12 @@ def validate_file(file_name):
 			check_args(relation)
 			check_connective(relation)
 		except Exception as e:
-			print 'Line %s' % (i+1), e
+			sys.stderr.write('Line %s %s\n' % ((i+1), e))
+			all_correct = False
+	return all_correct
 
 def validate_relation_list(relation_list):
+	all_correct = True
 	for i, relation in enumerate(relation_list):
 		try:
 			check_type(relation)	
@@ -46,7 +51,9 @@ def validate_relation_list(relation_list):
 			check_args(relation)
 			check_connective(relation)
 		except Exception as e:
-			print 'Relation %s' % (i+1), e
+			sys.stderr.write('Relation %s %s\n' % (i, e))
+			all_correct = False
+	return all_correct
 	
 def check_type(relation):
 	if 'Type' not in relation:
