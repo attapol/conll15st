@@ -183,7 +183,10 @@ def evaluate_sense(gold_list, predicted_list):
 
 	for i, predicted_relation in enumerate(predicted_list):
 		if i not in predicted_to_gold_map:
-			sense_cm.add(predicted_relation['Sense'][0], 'no')
+			predicted_sense = predicted_relation['Sense'][0]
+			if not sense_cm.alphabet.has_label(predicted_sense):
+				predicted_sense = 'no'
+			sense_cm.add(predicted_sense, 'no')
 	return sense_cm
 
 
