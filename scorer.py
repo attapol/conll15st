@@ -175,6 +175,8 @@ def evaluate_sense(gold_list, predicted_list):
 			if predicted_sense in gold_relation['Sense']:
 				sense_cm.add(predicted_sense, predicted_sense)
 			else:
+				if not sense_cm.alphabet.has_label(predicted_sense):
+					predicted_sense = 'no'
 				sense_cm.add(predicted_sense, gold_relation['Sense'][0])
 		else:
 			sense_cm.add('no', gold_relation['Sense'][0])
