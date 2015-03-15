@@ -79,8 +79,8 @@ class ConfusionMatrix(object):
 
 	def get_prf(self, class_name):
 		index = self.alphabet.get_index(class_name)
-		precision = self.matrix[index, index] / sum(self.matrix[index, :])
-		recall = self.matrix[index, index] / sum(self.matrix[:, index])
+		recall = self.matrix[index, index] / sum(self.matrix[index, :])
+		precision = self.matrix[index, index] / sum(self.matrix[:, index])
 		f1 = (2 * precision * recall) / (precision + recall)
 		return (precision, recall, f1)
 
