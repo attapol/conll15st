@@ -11,7 +11,9 @@ if __name__ == '__main__':
 	gold_relations = [json.loads(x) for x in open('%s/pdtb-data.json' % input_dataset)]
 	predicted_relations = [json.loads(x) for x in open('%s/output.json' % input_run)]
 
-	validate_relation_list(predicted_relations)
+	all_correct = validate_relation_list(predicted_relations)
+	if not all_correct:
+		exit(1)
 	connective_cm, arg1_cm, arg2_cm, rel_arg_cm, sense_cm, precision, recall, f1 = \
 			evaluate(gold_relations, predicted_relations)  
 	output_file = open('evaluation.prototext', 'w')
