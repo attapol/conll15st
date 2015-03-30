@@ -95,8 +95,14 @@ class ConfusionMatrix(object):
 		lines = []
 		# computing precision, recall, and f1
 		for i in xrange(self.alphabet.size()):
-			precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
-			recall[i] = self.matrix[i,i] / sum(self.matrix[:,i])
+                        if sum(self.matrix[i,:]) == 0:
+                                precision[i] = 1.0
+                        else:
+                                precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
+                        if sum(self.matrix[:,i]) == 0:
+                                recall[i] = 1.0
+                        else:
+                                recall[i] = self.matrix[i,i] / sum(self.matrix[:,i])
 			if precision[i] + recall[i] != 0:
 				f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i])
 			else:
