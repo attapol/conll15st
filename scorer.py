@@ -122,6 +122,7 @@ def connective_head_matching(gold_raw_connective, predicted_raw_connective):
 		return False
 
 	gold_token_indices = [x[2] for x in gold_token_address_list]
+
 	if gold_token_address_list == predicted_token_list:
 		return True
 	elif not set(predicted_token_list).issubset(set(gold_token_indices)):
