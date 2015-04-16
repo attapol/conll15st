@@ -47,6 +47,17 @@ class ConfusionMatrix(object):
 
 
 	def add_list(self, predictions, true_answers):
+		"""Add a list of data point to the confusion matrix
+
+		A list can be a list of integers.
+		If prediction is an integer, we assume that it's a legitimate index
+		on the confusion matrix.
+
+		A list can be a list of strings.
+		If prediction is a string, then we will do the look up to
+		map to the integer index for the confusion matrix.
+
+		"""
 		for p, t in zip(predictions, true_answers):
 			self.add(p, t)
 
@@ -65,6 +76,28 @@ class ConfusionMatrix(object):
 				f1[i] = 0
 		return numpy.mean(f1)
 
+	def compute_average_prf(self):
+		precision = numpy.zeros(self.alphabet.size())
+		recall = numpy.zeros(self.alphabet.size())
+		f1 = numpy.zeros(self.alphabet.size())
+
+		# computing precision, recall, and f1
+		for i in xrange(self.alphabet.size()):
+			if sum(self.matrix[i,:]) == 0:
+				precision[i] = 1.0
+			else:
+				precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
+			if sum(self.matrix[:,i]) == 0:
+				recall[i] = 1.0
+			else:
+				recall[i] = self.matrix[i,i] / sum(self.matrix[:,i])
+			if precision[i] + recall[i] != 0:
+				f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i])
+			else:
+				f1[i] = 0
+		return (numpy.mean(precision), numpy.mean(recall), numpy.mean(f1))
+
+
 	def print_matrix(self):
 		num_classes = self.alphabet.size()
 		#header for the confusion matrix
@@ -78,9 +111,18 @@ class ConfusionMatrix(object):
 		print matrix_to_string(rows, header)
 
 	def get_prf(self, class_name):
+		"""Compute precision, recall, and f1 score for a given class
+
+		"""
 		index = self.alphabet.get_index(class_name)
-		recall = self.matrix[index, index] / sum(self.matrix[index, :])
-		precision = self.matrix[index, index] / sum(self.matrix[:, index])
+		if sum(self.matrix[index, :]) == 0:
+			recall = 1.0
+		else:
+			recall = self.matrix[index, index] / sum(self.matrix[index, :])
+		if sum(self.matrix[:, index]) == 0:
+			precision = 1.0
+		else:
+			precision = self.matrix[index, index] / sum(self.matrix[:, index])
 		f1 = (2 * precision * recall) / (precision + recall)
 		return (precision, recall, f1)
 
@@ -95,14 +137,14 @@ class ConfusionMatrix(object):
 		lines = []
 		# computing precision, recall, and f1
 		for i in xrange(self.alphabet.size()):
-                        if sum(self.matrix[i,:]) == 0:
-                                precision[i] = 1.0
-                        else:
-                                precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
-                        if sum(self.matrix[:,i]) == 0:
-                                recall[i] = 1.0
-                        else:
-                                recall[i] = self.matrix[i,i] / sum(self.matrix[:,i])
+			if sum(self.matrix[i,:]) == 0:
+				precision[i] = 1.0
+			else:
+				precision[i] = self.matrix[i,i] / sum(self.matrix[i,:])
+			if sum(self.matrix[:,i]) == 0:
+				recall[i] = 1.0
+			else:
+				recall[i] = self.matrix[i,i] / sum(self.matrix[:,i])
 			if precision[i] + recall[i] != 0:
 				f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i])
 			else:
@@ -110,10 +152,10 @@ class ConfusionMatrix(object):
 			correct += self.matrix[i,i]
 			label = self.alphabet.get_label(i)
 			if label != 'no':
-				lines.append( '%s \tprecision %f \trecall %f\t F1 %f' %\
+				lines.append( '%s \tprecision %1.4f \trecall %1.4f\t F1 %1.4f' %\
 					(label, precision[i], recall[i], f1[i]))
 		#lines.append( '* Overall accuracy rate = %f' %(correct / sum(sum(self.matrix[:,:]))))
-		lines.append( '* Average precision %f \t recall %f\t F1 %f' %\
+		lines.append( '* Average precision %1.4f \t recall %1.4f\t F1 %1.4f' %\
 			(numpy.mean(precision), numpy.mean(recall), numpy.mean(f1)))
 		lines.sort()
 		print '\n'.join(lines)

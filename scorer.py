@@ -15,19 +15,19 @@ def evaluate(gold_list, predicted_list):
 	sense_cm = evaluate_sense(gold_list, predicted_list)
 
 	print 'Explicit connectives--------------'
-	print 'Precision %s Recall %s F1 %s' % connective_cm.get_prf('yes')
+	print 'Precision %1.4f Recall %1.4f F1 %1.4f' % connective_cm.get_prf('yes')
 
 	print 'Arg 1 extractor--------------'
-	print 'Precision %s Recall %s F1 %s' % arg1_cm.get_prf('yes')
+	print 'Precision %1.4f Recall %1.4f F1 %1.4f' % arg1_cm.get_prf('yes')
 	print 'Arg 2 extractor--------------'
-	print 'Precision %s Recall %s F1 %s' % arg2_cm.get_prf('yes')
+	print 'Precision %1.4f Recall %1.4f F1 %1.4f' % arg2_cm.get_prf('yes')
 	print 'Arg1 Arg2 extractor combined--------------'
-	print 'Precision %s Recall %s F1 %s' % rel_arg_cm.get_prf('yes')
+	print 'Precision %1.4f Recall %1.4f F1 %1.4f' % rel_arg_cm.get_prf('yes')
 	print 'Sense classification--------------'
 	sense_cm.print_summary()
 	print 'Overall parser performance --------------'
 	precision, recall, f1 = evaluate_relation(gold_list, predicted_list)
-	print 'Precision %s Recall %s F1 %s' % (precision, recall, f1)
+	print 'Precision %1.4f Recall %1.4f F1 %1.4f' % (precision, recall, f1)
 	return connective_cm, arg1_cm, arg2_cm, rel_arg_cm, sense_cm, precision, recall, f1
 
 
