@@ -18,8 +18,8 @@ if __name__ == '__main__':
 	if not all_correct:
 		exit(1)
 	connective_cm, arg1_cm, arg2_cm, rel_arg_cm, sense_cm, precision, recall, f1 = \
-			evaluate(gold_relations, predicted_relations)  
-	output_file = open('evaluation.prototext', 'w')
+			evaluate(gold_relations, predicted_relations)
+	output_file = open('%s/evaluation.prototext' % output_dir, 'w')
 
 	write_proto_text('Parser precision', precision, output_file)
 	write_proto_text('Parser recall', recall, output_file)
