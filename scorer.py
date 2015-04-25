@@ -129,8 +129,8 @@ def connective_head_matching(gold_raw_connective, predicted_raw_connective):
 		return False
 	else:
 		conn_head, indices = CONN_HEAD_MAPPER.map_raw_connective(gold_tokens)
-        gold_head_connective_indices = [gold_token_indices[x] for x in indices]
-        return set(gold_head_connective_indices).issubset(set(predicted_token_list))
+		gold_head_connective_indices = [gold_token_indices[x] for x in indices]
+		return set(gold_head_connective_indices).issubset(set(predicted_token_list))
 
 
 def evaluate_relation(gold_list, predicted_list):
@@ -152,10 +152,10 @@ def evaluate_relation(gold_list, predicted_list):
 			else:
 				if predicted_sense in gold_relation['Sense']:
 					correct += 1
-    if len(predicted_list) == 0:
-        precision = 1
-    else:
-        precision = correct/len(predicted_list)
+	if len(predicted_list) == 0:
+		precision = 1
+	else:
+		precision = correct/len(predicted_list)
 	recall = correct/len(gold_list)
 	return (precision, recall, (2* precision * recall) / (precision + recall))
 
