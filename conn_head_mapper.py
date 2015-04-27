@@ -10,8 +10,8 @@ class ConnHeadMapper(object):
 		else:
 			head_connective = self.mapping.get(raw_connective.lower(), raw_connective)
 		# find the index of the head connectives
-		raw_connective_token_list = raw_connective.lower().split(' ')
-		head_connective_token_list = head_connective.split(' ')
+		raw_connective_token_list = [x for x in raw_connective.lower().split(' ') if len(x) > 0]
+		head_connective_token_list = [x for x in head_connective.split(' ') if len(x) > 0]
 		start_point = 0
 		indices = []
 		for head_connective_token in head_connective_token_list:
@@ -372,7 +372,7 @@ class ConnHeadMapper(object):
 		"years before": "before", 
 		"yet": "yet",
 		"Days after": "after",
-		"In start contrast": "in contrast",
+		"In stark contrast": "in contrast",
 		"hours before": "before",
 		"in the mean time": "in the mean time",
 		"particularly": "particularly",
