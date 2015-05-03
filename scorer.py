@@ -157,6 +157,12 @@ def evaluate_relation(gold_list, predicted_list):
 	else:
 		precision = correct/len(predicted_list)
 	recall = correct/len(gold_list)
+
+	if precision + recall != 0:
+		f1 = 2 * precision * recall / (precision + recall)
+	else:
+		f1 = 0
+
 	return (precision, recall, (2* precision * recall) / (precision + recall))
 
 def evaluate_sense(gold_list, predicted_list):
