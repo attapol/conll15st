@@ -163,7 +163,7 @@ def evaluate_relation(gold_list, predicted_list):
 	else:
 		f1 = 0
 
-	return (precision, recall, (2* precision * recall) / (precision + recall))
+	return (precision, recall, f1)
 
 def evaluate_sense(gold_list, predicted_list):
 	"""Evaluate sense classifier
