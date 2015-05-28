@@ -61,6 +61,17 @@ class ConfusionMatrix(object):
 		for p, t in zip(predictions, true_answers):
 			self.add(p, t)
 
+	def compute_mean(self, values):
+		"""Compute the mean while excluding the 'no' label"""
+		sum_values = 0.0
+		num_values = 0.0
+		for i, value in enumerate(values):
+			label = self.alphabet.get_label(i)
+			if label != 'no':
+				sum_values += value 
+				num_values +=1
+		return sum_values/num_values
+
 	def compute_average_f1(self):
 		precision = numpy.zeros(self.alphabet.size())
 		recall = numpy.zeros(self.alphabet.size())
@@ -74,7 +85,7 @@ class ConfusionMatrix(object):
 				f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i])
 			else:
 				f1[i] = 0
-		return numpy.mean(f1)
+		return self.compute_mean(f1)
 
 	def compute_average_prf(self):
 		precision = numpy.zeros(self.alphabet.size())
@@ -95,7 +106,7 @@ class ConfusionMatrix(object):
 				f1[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i])
 			else:
 				f1[i] = 0
-		return (numpy.mean(precision), numpy.mean(recall), numpy.mean(f1))
+		return (self.compute_mean(precision), self.compute_mean(recall), self.compute_mean(f1))
 
 
 	def print_matrix(self):
@@ -156,7 +167,7 @@ class ConfusionMatrix(object):
 					(label, precision[i], recall[i], f1[i]))
 		#lines.append( '* Overall accuracy rate = %f' %(correct / sum(sum(self.matrix[:,:]))))
 		lines.append( '* Average precision %1.4f \t recall %1.4f\t F1 %1.4f' %\
-			(numpy.mean(precision), numpy.mean(recall), numpy.mean(f1)))
+			(self.compute_mean(precision), self.compute_mean(recall), self.compute_mean(f1)))
 		lines.sort()
 		print '\n'.join(lines)
 
