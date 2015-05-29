@@ -134,7 +134,10 @@ class ConfusionMatrix(object):
 			precision = 1.0
 		else:
 			precision = self.matrix[index, index] / sum(self.matrix[:, index])
-		f1 = (2 * precision * recall) / (precision + recall)
+		if precision + recall != 0:
+			f1 = (2 * precision * recall) / (precision + recall)
+		else:
+			f1 = 0.0
 		return (precision, recall, f1)
 
 
